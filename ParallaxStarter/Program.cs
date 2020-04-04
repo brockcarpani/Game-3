@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ParallaxStarter
+namespace Game3
 {
 #if WINDOWS || LINUX
     /// <summary>
