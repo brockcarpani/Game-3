@@ -24,14 +24,14 @@ namespace Game3
         {
             X = 0,
             Y = 0,
-            Width = 131,
-            Height = 54
+            Width = 259,
+            Height = 171
         };
 
         /// <summary>
         /// The origin of the helicopter sprite
         /// </summary>
-        Vector2 origin = new Vector2(66, 1);
+        Vector2 origin = new Vector2(130, 1);
 
         /// <summary>
         /// The angle the helicopter should tilt
@@ -46,7 +46,7 @@ namespace Game3
         /// <summary>
         /// How fast the player moves
         /// </summary>
-        public float Speed { get; set; } = 100;
+        public float Speed { get; set; } = 500;
 
         /// <summary>
         /// Constructs a player
@@ -95,7 +95,7 @@ namespace Game3
             }
 
             // Caclulate the tilt of the helicopter
-            angle = 0.5f * direction.X;
+            angle = 0.3f * direction.X;
 
             // Move the helicopter
             Position += (float)gameTime.ElapsedGameTime.TotalSeconds * Speed * direction;

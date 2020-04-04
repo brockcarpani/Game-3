@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System.Collections.Generic;
+using System;
 
 namespace Game3
 {
@@ -33,6 +34,11 @@ namespace Game3
         {
             // TODO: Add your initialization logic here
 
+            // Set up size
+            graphics.PreferredBackBufferWidth = 1042;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.ApplyChanges();
+
             base.Initialize();
         }
 
@@ -46,7 +52,7 @@ namespace Game3
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            var spritesheet = Content.Load<Texture2D>("helicopter");
+            var spritesheet = Content.Load<Texture2D>("santa-small");
             player = new Player(spritesheet);
 
             // Player
@@ -56,9 +62,17 @@ namespace Game3
             playerLayer.DrawOrder = 2;
             Components.Add(playerLayer);
 
+            // Sky
+            var skyTexture = Content.Load<Texture2D>("Sky");
+            var skySprite = new StaticSprite(skyTexture);
+
+            var skyLayer = new ParallaxLayer(this);
+            skyLayer.Sprites.Add(skySprite);
+            skyLayer.DrawOrder = 0;
+            Components.Add(skyLayer);
 
             // Background
-            var backgroundTexture = Content.Load<Texture2D>("background");
+            var backgroundTexture = Content.Load<Texture2D>("BG");
             var backgroundSprite = new StaticSprite(backgroundTexture);
 
             var backgroundLayer = new ParallaxLayer(this);
@@ -69,13 +83,13 @@ namespace Game3
             // Midground
             var midgroundTextures = new Texture2D[]
             {
-                Content.Load<Texture2D>("midground1"),
-                Content.Load<Texture2D>("midground2")
+                Content.Load<Texture2D>("Middle"),
+                Content.Load<Texture2D>("Middle")
             };
             var midgroundSprites = new StaticSprite[]
             {
                 new StaticSprite(midgroundTextures[0]),
-                new StaticSprite(midgroundTextures[1], new Vector2(3500, 0))
+                new StaticSprite(midgroundTextures[1], new Vector2(1920, 0))
             };
 
             var midgroundLayer = new ParallaxLayer(this);
@@ -84,26 +98,19 @@ namespace Game3
             Components.Add(midgroundLayer);
 
             // Foreground
-            var foregroundTextures = new List<Texture2D>()
+            var foregroundTextures = new Texture2D[]
+           {
+                Content.Load<Texture2D>("Snow"),
+                Content.Load<Texture2D>("Snow")
+           };
+            var foregroundSprites = new StaticSprite[]
             {
-                Content.Load<Texture2D>("foreground1"),
-                Content.Load<Texture2D>("foreground2"),
-                Content.Load<Texture2D>("foreground3"),
-                Content.Load<Texture2D>("foreground4")
+                new StaticSprite(foregroundTextures[0]),
+                new StaticSprite(foregroundTextures[1], new Vector2(1920, 0))
             };
-            var foregroundSprites = new List<StaticSprite>();
-            for (int i = 0; i < foregroundTextures.Count; i++)
-            {
-                var position = new Vector2(i * 3500, 0);
-                var sprite = new StaticSprite(foregroundTextures[i], position);
-                foregroundSprites.Add(sprite);
-            }
 
             var foregroundLayer = new ParallaxLayer(this);
-            foreach (var sprite in foregroundSprites)
-            {
-                foregroundLayer.Sprites.Add(sprite);
-            }
+            foregroundLayer.Sprites.AddRange(foregroundSprites);
             foregroundLayer.DrawOrder = 4;
             Components.Add(foregroundLayer);
 
@@ -134,6 +141,7 @@ namespace Game3
 
             // TODO: Add your update logic here
             player.Update(gameTime);
+            Console.WriteLine(player.Position.X);
 
             base.Update(gameTime);
         }
