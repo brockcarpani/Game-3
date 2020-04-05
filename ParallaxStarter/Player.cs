@@ -13,14 +13,14 @@ namespace Game3
     public class Player : ISprite
     {
         /// <summary>
-        /// A spritesheet containing a helicopter image
+        /// A spritesheet containing a santa image
         /// </summary>
         Texture2D spritesheet;
 
         /// <summary>
-        /// The portion of the spritesheet that is the helicopter
+        /// The portion of the spritesheet that is the santa
         /// </summary>
-        Rectangle sourceRect = new Rectangle
+        public Rectangle sourceRect = new Rectangle
         {
             X = 0,
             Y = 0,
@@ -29,12 +29,12 @@ namespace Game3
         };
 
         /// <summary>
-        /// The origin of the helicopter sprite
+        /// The origin of the santa sprite
         /// </summary>
         Vector2 origin = new Vector2(130, 1);
 
         /// <summary>
-        /// The angle the helicopter should tilt
+        /// The angle the santa should tilt
         /// </summary>
         float angle = 0;
 
@@ -46,7 +46,9 @@ namespace Game3
         /// <summary>
         /// How fast the player moves
         /// </summary>
-        public float Speed { get; set; } = 500;
+        public float Speed { get; set; } = 300;
+
+        private SpriteEffects effects = SpriteEffects.None;
 
         /// <summary>
         /// Constructs a player
@@ -80,10 +82,12 @@ namespace Game3
             if(keyboard.IsKeyDown(Keys.Left) || keyboard.IsKeyDown(Keys.A))
             {
                 direction.X -= 1;
+                effects = SpriteEffects.FlipHorizontally;
             }
             if (keyboard.IsKeyDown(Keys.Right) || keyboard.IsKeyDown(Keys.D)) 
             {
                 direction.X += 1;
+                effects = SpriteEffects.None;
             }
             if(keyboard.IsKeyDown(Keys.Up) || keyboard.IsKeyDown(Keys.W))
             {
@@ -94,10 +98,10 @@ namespace Game3
                 direction.Y += 1;
             }
 
-            // Caclulate the tilt of the helicopter
+            // Caclulate the tilt of the santa
             angle = 0.3f * direction.X;
 
-            // Move the helicopter
+            // Move the santa
             Position += (float)gameTime.ElapsedGameTime.TotalSeconds * Speed * direction;
         }
 
@@ -107,8 +111,8 @@ namespace Game3
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            // Render the helicopter, rotating about the rotors
-            spriteBatch.Draw(spritesheet, Position, sourceRect, Color.White, angle, origin, 1f, SpriteEffects.None, 0.7f);
+            // Render the santa
+            spriteBatch.Draw(spritesheet, Position, sourceRect, Color.White, angle, origin, 1f, effects, 0.7f);
         }
 
     }
