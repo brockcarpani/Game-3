@@ -42,12 +42,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoScrollController.cs" />
+    <Compile Include="Fireball.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="IScrollController.cs" />
     <Compile Include="ISprite.cs" />
     <Compile Include="ParallaxLayer.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerTrackingScrollController.cs" />
+    <Compile Include="Present.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticSprite.cs" />

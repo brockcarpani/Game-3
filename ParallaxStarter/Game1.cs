@@ -14,9 +14,14 @@ namespace Game3
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteFont font;
 
         Player player;
+        Present present;
+        Fireball fireball;
 
+        int score = 0;
+        int lives = 3;
 
         public Game1()
         {
@@ -51,6 +56,9 @@ namespace Game3
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Load font
+            font = Content.Load<SpriteFont>("font");
+
             // TODO: use this.Content to load your game content here
             var spritesheet = Content.Load<Texture2D>("santa-small");
             player = new Player(spritesheet);
@@ -61,6 +69,26 @@ namespace Game3
 
             playerLayer.DrawOrder = 2;
             Components.Add(playerLayer);
+
+            // Present
+            var presentTexture = Content.Load<Texture2D>("present");
+            present = new Present(presentTexture);
+
+            var presentLayer = new ParallaxLayer(this);
+            presentLayer.Sprites.Add(present);
+
+            presentLayer.DrawOrder = 2;
+            Components.Add(presentLayer);
+
+            // Fireball
+            var fireballTexture = Content.Load<Texture2D>("fireball");
+            fireball = new Fireball(fireballTexture);
+
+            var fireballLayer = new ParallaxLayer(this);
+            fireballLayer.Sprites.Add(fireball);
+
+            fireballLayer.DrawOrder = 2;
+            Components.Add(fireballLayer);
 
             // Sky
             var skyTexture = Content.Load<Texture2D>("Sky");
@@ -118,6 +146,8 @@ namespace Game3
             midgroundLayer.ScrollController = new PlayerTrackingScrollController(player, 0.4f);
             playerLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
             foregroundLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
+            presentLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
+            fireballLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
         }
 
         /// <summary>
@@ -136,12 +166,18 @@ namespace Game3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || lives <= 0)
                 Exit();
 
             // TODO: Add your update logic here
             player.Update(gameTime);
-            Console.WriteLine(player.Position.X);
+
+            fireball.Update(gameTime);
+
+            keepPlayerInBounds();
+
+            checkForScore();
+            checkForLives();
 
             base.Update(gameTime);
         }
@@ -155,8 +191,61 @@ namespace Game3
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            // Draw UI
+            spriteBatch.Begin();
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(500, 0), Color.Black);
+            spriteBatch.DrawString(font, "Lives: " + lives, new Vector2(100, 50), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.DrawString(font, "Lives: " + lives, new Vector2(500, 50), Color.Black);
+            spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Keeps player in bounds of playable area
+        /// </summary>
+        private void keepPlayerInBounds() 
+        {
+            if (player.Position.X < 200)
+            {
+                player.Position = new Vector2(200, player.Position.Y);
+            }
+            if (player.Position.X > 3000)
+            {
+                player.Position = new Vector2(3000, player.Position.Y);
+            }
+            if (player.Position.Y < 0)
+            {
+                player.Position = new Vector2(player.Position.X, 0);
+            }
+            if (player.Position.Y > 768 - 171)
+            {
+                player.Position = new Vector2(player.Position.X, 768 - 171);
+            }
+        }
+
+        private void checkForScore()
+        {
+            if (player.Position.X < present.Position.X + present.sourceRect.Width
+                    && player.Position.X + player.sourceRect.Width > present.Position.X
+                    && player.Position.Y < present.Position.Y + present.sourceRect.Height
+                    && player.Position.Y + player.sourceRect.Height > present.Position.Y)
+            {
+                present.spawnNewLocation();
+                score++;
+            }
+        }
+
+        private void checkForLives()
+        {
+            if (player.Position.X < fireball.Position.X + fireball.sourceRect.Width
+                    && player.Position.X + player.sourceRect.Width > fireball.Position.X
+                    && player.Position.Y < fireball.Position.Y + fireball.sourceRect.Height
+                    && player.Position.Y + player.sourceRect.Height > fireball.Position.Y)
+            {
+                fireball.spawnNewLocation();
+                lives--;
+            }
         }
     }
 }
