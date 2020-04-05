@@ -19,6 +19,7 @@ namespace Game3
         Player player;
         Present present;
         Fireball fireball;
+        Text text;
 
         int score = 0;
         int lives = 3;
@@ -58,6 +59,13 @@ namespace Game3
 
             // Load font
             font = Content.Load<SpriteFont>("font");
+            text = new Text(font, score, lives);
+
+            var textLayer = new ParallaxLayer(this);
+            textLayer.Sprites.Add(text);
+
+            textLayer.DrawOrder = 5;
+            Components.Add(textLayer);
 
             // TODO: use this.Content to load your game content here
             var spritesheet = Content.Load<Texture2D>("santa-small");
@@ -148,6 +156,7 @@ namespace Game3
             foregroundLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
             presentLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
             fireballLayer.ScrollController = new PlayerTrackingScrollController(player, 1.0f);
+            textLayer.ScrollController = new PlayerTrackingScrollController(player, 0.0f);
         }
 
         /// <summary>
@@ -174,6 +183,8 @@ namespace Game3
 
             fireball.Update(gameTime);
 
+            text.Update(gameTime, score, lives);
+
             keepPlayerInBounds();
 
             checkForScore();
@@ -191,12 +202,6 @@ namespace Game3
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            // Draw UI
-            spriteBatch.Begin();
-            spriteBatch.DrawString(font, "Score: " + score, new Vector2(500, 0), Color.Black);
-            spriteBatch.DrawString(font, "Lives: " + lives, new Vector2(100, 50), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-            spriteBatch.DrawString(font, "Lives: " + lives, new Vector2(500, 50), Color.Black);
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }

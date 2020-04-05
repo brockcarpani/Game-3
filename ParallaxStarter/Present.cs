@@ -72,7 +72,7 @@ namespace Game3
         public void spawnNewLocation()
         {
             Position = new Vector2(
-                (float)random.Next(0, 2900),
+                (float)random.Next(200, 2900),
                 (float)random.Next(0, 600)
                 );
         }
